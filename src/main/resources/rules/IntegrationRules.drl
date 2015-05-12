@@ -1,0 +1,42 @@
+package integration
+ 
+import transfer.*;
+import transfer.datacenter.*;
+import transfer.visudesign.*;
+import transfer.association.*;
+import services.auxiliary.*;
+import services.domains.*
+
+rule "Plug Data - No Catalog linked"
+    when
+        $msg : PlugDataMsg ( $dashboard : dashboardName) and
+        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
+    then
+    	System.out.println("Rule \"Plug Data - No Catalog\" triggered !");
+end
+
+rule "Plug Data - Resource matching Data"
+    when
+        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : uri) and
+        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
+        IsDefinedAsw (answer == true) from DataCenter.isDefined(new IsDefinedMsg($catalog, $uri))
+    then
+    	System.out.println("Rule \"Plug Data - Resource matching Data\" triggered !");
+end
+
+rule "Plug Data - No Resource matching Data"
+    when
+        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : uri) and
+        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
+        IsDefinedAsw (answer == false) from DataCenter.isDefined(new IsDefinedMsg($catalog, $uri))
+    then
+    	System.out.println("Rule \"Plug Data - No Resource matching Data\" triggered !");
+end
+
+rule "Link"
+	when
+		$msg : LinkMsg( )
+	then
+    	System.out.println("Rule Link triggered !");
+		Association.link($msg);
+end
