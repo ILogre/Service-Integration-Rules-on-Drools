@@ -7,12 +7,17 @@ import transfer.association.*;
 import services.auxiliary.*;
 import services.domains.*
 
+/****** Integration Rules *******/
+
+/* Plug Data */
+
 rule "Plug Data - No Catalog linked"
     when
         $msg : PlugDataMsg ( $dashboard : dashboardName) and
         $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
     then
     	System.out.println("Rule \"Plug Data - No Catalog\" triggered !");
+    	//TODO Log : no integration
 end
 
 rule "Plug Data - Resource matching Data"
@@ -32,6 +37,38 @@ rule "Plug Data - No Resource matching Data"
     then
     	System.out.println("Rule \"Plug Data - No Resource matching Data\" triggered !");
 end
+
+/* Characterize */
+
+rule "Characterize - Threshold - No Catalog"
+    when
+        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
+        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
+    then
+    	System.out.println("Rule \"Characterize - Threshold - No Catalog\" triggered !");
+    	//TODO Log : no integration
+end
+
+rule "Characterize - Threshold - One Catalog"
+    when
+        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
+        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
+        
+    then
+    	System.out.println("Rule \"Characterize - Threshold - One Catalog\" triggered !");
+end
+
+/*
+rule "Characterize - Threshold - Several Catalog"
+    when
+        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
+        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
+    then
+    	System.out.println("Rule \"Characterize - Threshold - Several Catalog\" triggered !");
+end
+*/
+
+/****** Routing Rules ******/
 
 rule "Link"
 	when
