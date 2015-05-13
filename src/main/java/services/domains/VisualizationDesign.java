@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import transfer.datacenter.DeclareCatalogMsg;
 import transfer.visudesign.AddVisuMsg;
 import transfer.visudesign.CharacterizeMsg;
+import transfer.visudesign.DeclareDashboardMsg;
 import transfer.visudesign.PlugDataMsg;
 
-public class VisualisationDesign {
+public class VisualizationDesign {
 	
-	public static void declareDashboard(DeclareCatalogMsg msg){
-		String name = msg.getName();
+	public static void declareDashboard(DeclareDashboardMsg msg){
+		String name = msg.getDashboardName();
 		System.out.println("VisuDesign : dashboard \""+name+"\" declared at "+System.currentTimeMillis());
-		Container.getInstance().exposeDashboard(new Dashboard(name));
+		Container.getInstance().declareDashboard(new Dashboard(name));
 	}
 	
 	//TODO add param to handle the spatial composition
@@ -51,13 +51,13 @@ public class VisualisationDesign {
 	private static class Container{
 		private static Container instance;
 		private List<Dashboard> dashboards;
-		private Container(){ this.dashboards = new ArrayList<VisualisationDesign.Dashboard>();}
+		private Container(){ this.dashboards = new ArrayList<VisualizationDesign.Dashboard>();}
 		
 		public static Container getInstance(){
 			if(instance==null) instance=new Container();
 			return instance;
 		}
-		public void exposeDashboard(Dashboard d){
+		public void declareDashboard(Dashboard d){
 			this.dashboards.add(d);
 		}
 		public Dashboard getDashboard(String dashboardName){

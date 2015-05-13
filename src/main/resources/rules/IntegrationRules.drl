@@ -77,3 +77,35 @@ rule "Link"
     	System.out.println("Rule Link triggered !");
 		Association.link($msg);
 end
+
+rule "Declare Dashboard"
+	when
+		$msg : DeclareDashboardMsg()
+	then
+    	System.out.println("Rule Declare Dashboard triggered !");
+		VisualizationDesign.declareDashboard($msg);
+end
+
+rule "Add Visualization"
+	when
+		$msg : AddVisuMsg()
+	then
+    	System.out.println("Rule Add Visualization triggered !");
+		VisualizationDesign.addVisu($msg);
+end
+
+rule "Declare Catalog"
+	when
+		$msg : DeclareCatalogMsg()
+	then
+    	System.out.println("Rule Declare Catalog triggered !");
+		DataCenter.declareCatalog($msg);
+end
+
+rule "Expose Resource"
+	when
+		$msg : ExposeResourceMsg()
+	then
+    	System.out.println("Rule Expose Resource triggered !");
+		DataCenter.exposeResource($msg);
+end

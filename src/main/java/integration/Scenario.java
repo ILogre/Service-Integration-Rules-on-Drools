@@ -5,6 +5,7 @@ import java.util.Map;
 
 import transfer.association.LinkMsg;
 import transfer.datacenter.DeclareCatalogMsg;
+import transfer.datacenter.ExposeResourceMsg;
 import transfer.visudesign.AddVisuMsg;
 import transfer.visudesign.CharacterizeMsg;
 import transfer.visudesign.DeclareDashboardMsg;
@@ -13,14 +14,14 @@ import transfer.visudesign.PlugDataMsg;
 public class Scenario {
 
 	public static void main(String[] args) throws Exception {
-		String catalogName = "jesuisuncatalogue";
-		String dashboardName = "jesuisundashboard";
-		String visuName = "jesuisunevisu";
+		String catalogName = "je suis un catalogue";
+		String dashboardName = "je suis un dashboard";
+		String visuName = "je suis une visu";
 		String uri = "je suis une uri";
 		ESB bus = new ESB();
 		
-		//PlugData(bus,catalogName,dashboardName, visuName, uri);
-		CharacterizeThreshold(bus,catalogName,dashboardName, visuName);
+		PlugData(bus,catalogName,dashboardName, visuName, uri);
+		//CharacterizeThreshold(bus,catalogName,dashboardName, visuName);
 	}
 	
 	public static void PlugData(ESB bus, String catalogName, String dashboardName, String visuName, String uri){
@@ -32,14 +33,20 @@ public class Scenario {
 		
 		System.out.println("Step 3 : Link both");
 		bus.handle(new LinkMsg(catalogName, dashboardName));
+
+		System.out.println("Step 4 : Expose a new Resource");
+		Map<String, String> elems = new HashMap<String,String>();
+		elems.put("t", "numerical");
+		elems.put("v", "numerical");
+		bus.handle(new ExposeResourceMsg(catalogName, uri, "je suis une semantique", elems));
 		
-		System.out.println("Step 4 : Add a visu to the dashboard");
+		System.out.println("Step 5 : Add a visu to the dashboard");
 		bus.handle(new AddVisuMsg(dashboardName, visuName));
 		
-		System.out.println("Step 5 : Plug a data on this visualization");
+		System.out.println("Step 6 : Plug a data on this visualization");
 		bus.handle(new PlugDataMsg(dashboardName, visuName, uri));
 		
-		System.out.println("Step 6 : Ending.");
+		System.out.println("Step 7 : Ending.");
 	}
 
 	public static void CharacterizeThreshold(ESB bus, String catalogName, String dashboardName, String visuName){
