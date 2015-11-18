@@ -3,14 +3,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>fr.unice</groupId>
+  <groupId>fr.unice.i3s</groupId>
   <artifactId>rulesonservices</artifactId>
-  <version>0</version
+  <version>1</version>
 <dependencies>
 <dependency>
 	<groupId>org.slf4j</groupId>
 	<artifactId>slf4j-api</artifactId>
 	<version>1.7.12</version>
+</dependency>
+<dependency>
+	<groupId>fr.unice.i3s</groupId>
+	<artifactId>SensorDeploymentService</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+</dependency>
+<dependency>
+	<groupId>fr.unice.i3s</groupId>
+	<artifactId>VisualizationDesignService</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+</dependency>
+	<dependency>
+		<groupId>fr.unice.i3s</groupId>
+		<artifactId>Common2Services</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+<dependency>
+	<groupId>org.drools</groupId>
+	<artifactId>drools-core</artifactId>
+	<version>6.3.0.Final</version>
 </dependency>
 </dependencies>
 

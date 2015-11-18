@@ -5,7 +5,17 @@ import transfer.datacenter.*;
 import transfer.visudesign.*;
 import transfer.association.*;
 import services.auxiliary.*;
-import services.domains.*
+import services.domains.*;
+import services.accesspoint.*;
+
+import VisualizationDesignService.domain.*;
+
+import message.CharacterizeVisuMsg;
+import message.DeclareDashboardMsg;
+import message.PlugDataMsg;
+import message.DeclareCatalogMsg;
+import message.IsDefinedMsg;
+import message.IsDefinedAsw;
 
 /****** Integration Rules *******/
 
@@ -17,32 +27,31 @@ rule "Plug Data - No Catalog linked"
         $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
     then
     	System.out.println("Rule \"Plug Data - No Catalog\" triggered !");
-    	//TODO Log : no integration
 end
 
 rule "Plug Data - Resource matching Data"
     when
-        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : uri) and
+        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
         GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
-        IsDefinedAsw (answer == true) from DataCenter.isDefined(new IsDefinedMsg($catalog, $uri))
+        IsDefinedAsw (defined == true) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
     then
     	System.out.println("Rule \"Plug Data - Resource matching Data\" triggered !");
 end
 
 rule "Plug Data - No Resource matching Data"
     when
-        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : uri) and
+        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
         GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-        IsDefinedAsw (answer == false) from DataCenter.isDefined(new IsDefinedMsg($catalog, $uri))
+        IsDefinedAsw (defined == false) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
     then
     	System.out.println("Rule \"Plug Data - No Resource matching Data\" triggered !");
 end
 
-/* Characterize */
+/* Characterize 
 
 rule "Characterize - Threshold - No Catalog"
     when
-        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
+        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, $concernsMap : whatQualifier, $concernsMap.containsKey("Threshold") ) and
         $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
     then
     	System.out.println("Rule \"Characterize - Threshold - No Catalog\" triggered !");
@@ -58,7 +67,7 @@ rule "Characterize - Threshold - One Catalog"
     	System.out.println("Rule \"Characterize - Threshold - One Catalog\" triggered !");
 end
 
-/*
+
 rule "Characterize - Threshold - Several Catalog"
     when
         $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
@@ -78,20 +87,29 @@ rule "Link"
 		Association.link($msg);
 end
 
+/*
+rule "Test"
+	when
+		$service : VisualizationDesign()
+	then
+    	System.out.println("Test rule triggered !");
+end
+*/	
+
 rule "Declare Dashboard"
 	when
 		$msg : DeclareDashboardMsg()
 	then
     	System.out.println("Rule Declare Dashboard triggered !");
-		VisualizationDesign.declareDashboard($msg);
+		VisualizationDesignAP.declareDashboard($msg);
 end
 
-rule "Add Visualization"
+rule "Characterize Visualization"
 	when
-		$msg : AddVisuMsg()
+		$msg : CharacterizeVisuMsg()
 	then
     	System.out.println("Rule Add Visualization triggered !");
-		VisualizationDesign.addVisu($msg);
+		VisualizationDesignDomain.characterizeVisu($msg);
 end
 
 rule "Declare Catalog"
@@ -99,13 +117,5 @@ rule "Declare Catalog"
 		$msg : DeclareCatalogMsg()
 	then
     	System.out.println("Rule Declare Catalog triggered !");
-		DataCenter.declareCatalog($msg);
-end
-
-rule "Expose Resource"
-	when
-		$msg : ExposeResourceMsg()
-	then
-    	System.out.println("Rule Expose Resource triggered !");
-		DataCenter.exposeResource($msg);
+		SensorDeploymentDomain.declareCatalog($msg);
 end
