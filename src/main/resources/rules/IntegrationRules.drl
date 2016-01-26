@@ -10,42 +10,150 @@ import services.accesspoint.*;
 
 import VisualizationDesignService.domain.*;
 
-import message.CharacterizeVisuMsg;
 import message.DeclareDashboardMsg;
+import message.CharacterizeVisuMsg;
 import message.PlugDataMsg;
+import message.PositionMsg;
+
 import message.DeclareCatalogMsg;
+import message.BuildSensorHostingHierarchyMsg;
+import message.RecordEventBasedSensorMsg;
+import message.RecordPeriodicSensorMsg;
+import message.SketchPatternMsg;
 import message.IsDefinedMsg;
 import message.IsDefinedAsw;
 
-/****** Integration Rules *******/
+/*********************************/
+/******* Integration Rules *******/
+/*********************************/
+
+
+/** Visualization Design **/
 
 /* Plug Data */
 
-rule "Plug Data - No Catalog linked"
-    when
-        $msg : PlugDataMsg ( $dashboard : dashboardName) and
-        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
-    then
-    	System.out.println("Rule \"Plug Data - No Catalog\" triggered !");
-end
+	rule "Plug Data - No Catalog linked"
+	    when
+	        $msg : PlugDataMsg ( $dashboard : dashboardName) and
+	        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
+	    then
+	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Catalog\" triggered !");
+	end
+	
+	rule "Plug Data - Resource matching Data"
+	    when
+	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
+	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
+	        IsDefinedAsw (defined == true) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
+	    then
+	    	System.out.println("[DROOLS]: Rule \"Plug Data - Resource matching Data\" triggered !");
+	end
+	
+	rule "Plug Data - No Resource matching Data"
+	    when
+	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
+	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
+	        IsDefinedAsw (defined == false) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
+	    then
+	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Resource matching Data\" triggered !");
+	end
 
-rule "Plug Data - Resource matching Data"
-    when
-        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
-        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
-        IsDefinedAsw (defined == true) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
-    then
-    	System.out.println("Rule \"Plug Data - Resource matching Data\" triggered !");
-end
 
-rule "Plug Data - No Resource matching Data"
-    when
-        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
-        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-        IsDefinedAsw (defined == false) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
-    then
-    	System.out.println("Rule \"Plug Data - No Resource matching Data\" triggered !");
-end
+/** Sensor Deployment **/
+
+
+/** Miscalleneous **/
+
+
+/***************************/
+/****** Routing Rules ******/
+/***************************/
+
+
+/** Visualization Design **/
+
+	rule "Declare Dashboard"
+		when
+			$msg : DeclareDashboardMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Declare Dashboard triggered !");
+			VisualizationDesignAP.declareDashboard($msg);
+	end
+
+	rule "Characterize Visualization"
+		when
+			$msg : CharacterizeVisuMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Characterize Visualization triggered !");
+			VisualizationDesignAP.characterizeVisu($msg);
+	end
+
+	rule "Position"
+		when
+			$msg : PositionMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Position triggered !");
+			VisualizationDesignAP.position($msg);
+	end
+	
+	
+/** Sensor Deployment **/
+
+	rule "Declare Catalog"
+		when
+			$msg : DeclareCatalogMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Declare Catalog triggered !");
+			SensorDeploymentAP.declareCatalog($msg);
+	end
+	
+	rule "Build Sensor Hosting Hierarchy"
+		when
+			$msg : BuildSensorHostingHierarchyMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Build Sensor Hosting Hierarchy triggered !");
+			SensorDeploymentAP.buildSensorHostingHierarchy($msg);
+	end
+	
+	rule "Record Event-Based Sensor"
+		when
+			$msg : RecordEventBasedSensorMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Record Event-Based Sensor triggered !");
+			SensorDeploymentAP.recordEventBasedSensor($msg);
+	end
+	
+	rule "Record Periodic Sensor"
+		when
+			$msg : RecordPeriodicSensorMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Record Periodic Sensor triggered !");
+			SensorDeploymentAP.recordPeriodicSensor($msg);
+	end
+	
+	rule "Sketch Pattern"
+		when
+			$msg : SketchPatternMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Sketch Pattern triggered !");
+			SensorDeploymentAP.sketchPattern($msg);
+	end	
+	
+/** Miscalleneous **/
+
+	rule "Link"
+		when
+			$msg : LinkMsg( )
+		then
+	    	System.out.println("[DROOLS]: Rule Link triggered !");
+			Association.link($msg);
+	end
+
+
+
+/***************************/
+/********* Drafts **********/
+/***************************/
 
 /* Characterize 
 
@@ -77,45 +185,8 @@ rule "Characterize - Threshold - Several Catalog"
 end
 */
 
-/****** Routing Rules ******/
 
-rule "Link"
-	when
-		$msg : LinkMsg( )
-	then
-    	System.out.println("Rule Link triggered !");
-		Association.link($msg);
-end
 
-/*
-rule "Test"
-	when
-		$service : VisualizationDesign()
-	then
-    	System.out.println("Test rule triggered !");
-end
-*/	
 
-rule "Declare Dashboard"
-	when
-		$msg : DeclareDashboardMsg()
-	then
-    	System.out.println("Rule Declare Dashboard triggered !");
-		VisualizationDesignAP.declareDashboard($msg);
-end
 
-rule "Characterize Visualization"
-	when
-		$msg : CharacterizeVisuMsg()
-	then
-    	System.out.println("Rule Add Visualization triggered !");
-		VisualizationDesignDomain.characterizeVisu($msg);
-end
 
-rule "Declare Catalog"
-	when
-		$msg : DeclareCatalogMsg()
-	then
-    	System.out.println("Rule Declare Catalog triggered !");
-		SensorDeploymentDomain.declareCatalog($msg);
-end
