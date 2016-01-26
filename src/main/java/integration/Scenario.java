@@ -14,13 +14,14 @@ import transfer.association.LinkMsg;
 public class Scenario {
 	
 	public static Map<Message,Answer> mailbox;
+	public static ESB bus;
 
 	public static void main(String[] args) throws Exception {
 		String catalogName = "test_catalogue";
 		String dashboardName = "test_dashboard";
 		String visuName = "test_visu";
 		String dataName = "test_data";
-		ESB bus = new ESB();
+		bus = new ESB();
 		mailbox = new HashMap<Message, Answer>();
 		
 		
