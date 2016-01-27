@@ -21,6 +21,7 @@ public class ESB {
 		    KieContainer kContainer = ks.getKieClasspathContainer();
 		    KieSession kSession = kContainer.newKieSession("ksession-rules");
 	        kSession.insert(msg);
+	        kSession.insert(Scenario.mailbox);
 	        kSession.fireAllRules();
         } catch (Throwable t) {
             t.printStackTrace();

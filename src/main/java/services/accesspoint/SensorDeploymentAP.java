@@ -2,18 +2,18 @@ package services.accesspoint;
 
 import java.io.IOException;
 
-import transfer.IsValidatedAsw;
-import transfer.IsValidatedMsg;
-import transfer.ValidateAndPersistMsg;
-import domain.SensorDeployment;
-import errors.UnknownCatalogException;
 import message.BuildSensorHostingHierarchyMsg;
 import message.DeclareCatalogMsg;
 import message.IsDefinedAsw;
 import message.IsDefinedMsg;
+import message.IsValidatedCatalogAsw;
+import message.IsValidatedCatalogMsg;
 import message.RecordEventBasedSensorMsg;
 import message.RecordPeriodicSensorMsg;
 import message.SketchPatternMsg;
+import message.ValidateAndPersistCatalogMsg;
+import domain.SensorDeployment;
+import errors.UnknownCatalogException;
 
 public class SensorDeploymentAP {
 
@@ -46,11 +46,11 @@ public class SensorDeploymentAP {
 		return SensorDeployment.isDefined(msg);
 	}
 	
-	public static void validateAndPersist(ValidateAndPersistMsg msg) throws IOException {
+	public static void validateAndPersist(ValidateAndPersistCatalogMsg msg) throws IOException {
 		SensorDeployment.validateAndPersist(msg);
 	}
 	
-	public static IsValidatedAsw isValidated(IsValidatedMsg msg){
+	public static IsValidatedCatalogAsw isValidated(IsValidatedCatalogMsg msg){
 		return SensorDeployment.isValidated(msg);
 	}
 		

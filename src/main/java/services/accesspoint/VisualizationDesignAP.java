@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import message.CharacterizeVisuMsg;
 import message.DeclareDashboardMsg;
+import message.IsValidatedDashboardAsw;
+import message.IsValidatedDashboardMsg;
 import message.PlugDataMsg;
 import message.PositionMsg;
-import transfer.IsValidatedAsw;
-import transfer.IsValidatedMsg;
-import transfer.ValidateAndPersistMsg;
+import message.ValidateAndPersistDashboardMsg;
 import domain.VisualizationDesign;
 import errors.UnknownDashboardException;
 
@@ -35,11 +35,11 @@ public class VisualizationDesignAP  {
 		VisualizationDesign.position(msg);
 	}
 	
-	public static IsValidatedAsw isValidated(IsValidatedMsg msg){
+	public static IsValidatedDashboardAsw isValidated(IsValidatedDashboardMsg msg){
 		return VisualizationDesign.isValidated(msg);
 	}
 	
-	public static void validateAndPersist(ValidateAndPersistMsg msg) throws IOException {
+	public static void validateAndPersist(ValidateAndPersistDashboardMsg msg) throws IOException {
 		VisualizationDesign.validateAndPersist(msg);
 	}
 }

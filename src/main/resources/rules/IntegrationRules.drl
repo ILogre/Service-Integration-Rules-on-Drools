@@ -1,5 +1,7 @@
 package integration
  
+import java.util.HashMap; 
+ 
 import transfer.*;
 import transfer.datacenter.*;
 import transfer.visudesign.*;
@@ -14,6 +16,9 @@ import message.DeclareDashboardMsg;
 import message.CharacterizeVisuMsg;
 import message.PlugDataMsg;
 import message.PositionMsg;
+import message.ValidateAndPersistDashboardMsg;
+import message.IsValidatedDashboardMsg;
+import message.IsValidatedDashboardAsw;
 
 import message.DeclareCatalogMsg;
 import message.BuildSensorHostingHierarchyMsg;
@@ -22,6 +27,9 @@ import message.RecordPeriodicSensorMsg;
 import message.SketchPatternMsg;
 import message.IsDefinedMsg;
 import message.IsDefinedAsw;
+import message.ValidateAndPersistCatalogMsg;
+import message.IsValidatedCatalogMsg;
+import message.IsValidatedCatalogAsw;
 
 /*********************************/
 /******* Integration Rules *******/
@@ -96,6 +104,27 @@ import message.IsDefinedAsw;
 			VisualizationDesignAP.position($msg);
 	end
 	
+	rule "Validate And Persist Dashboard"
+		when
+			$msg : ValidateAndPersistDashboardMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Validate And Persist Dashboard triggered !");
+			VisualizationDesignAP.validateAndPersist($msg);
+	end
+			
+	
+	rule "Is Validated Dashboard"
+	no-loop true
+		when
+			$msg : IsValidatedDashboardMsg()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Is Validated Dashboard triggered !");
+			$mailbox.put($msg, VisualizationDesignAP.isValidated($msg));
+			update($mailbox);
+	end
+			
+	
 	
 /** Sensor Deployment **/
 
@@ -138,6 +167,28 @@ import message.IsDefinedAsw;
 	    	System.out.println("[DROOLS]: Rule Sketch Pattern triggered !");
 			SensorDeploymentAP.sketchPattern($msg);
 	end	
+	
+	
+	rule "Validate And Persist Catalog"
+		when
+			$msg : ValidateAndPersistCatalogMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Validate And Persist Catalog triggered !");
+			SensorDeploymentAP.validateAndPersist($msg);
+	end
+			
+	
+	rule "Is Validated Catalog"
+	no-loop true
+		when
+			$msg : IsValidatedCatalogMsg()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Is Validated Catalog triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.isValidated($msg));
+			update($mailbox);
+	end
+	
 	
 /** Miscalleneous **/
 
