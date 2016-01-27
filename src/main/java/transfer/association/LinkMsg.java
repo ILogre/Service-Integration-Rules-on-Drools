@@ -3,23 +3,26 @@ package transfer.association;
 import transfer.Message;
 
 public class LinkMsg extends Message {
-	private String model1;
-	private String model2;
-	public LinkMsg(String model1, String model2) {
+	
+	private String element1;
+	private String element2;
+	private boolean bidirectionnal;
+	
+	public LinkMsg(String model1, String model2, boolean bidirectionnal) {
 		super();
-		this.model1 = model1;
-		this.model2 = model2;
+		this.element1 = model1;
+		this.element2 = model2;
+		this.bidirectionnal = bidirectionnal;
 	}
-	public String getModel1() {
-		return model1;
+	public String getElement1() {
+		return element1;
 	}
-	public void setModel1(String model1) {
-		this.model1 = model1;
+
+	public String getElement2() {
+		return element2;
 	}
-	public String getModel2() {
-		return model2;
-	}
-	public void setModel2(String model2) {
-		this.model2 = model2;
+	
+	public boolean isBidirectionnal() {
+		return bidirectionnal;
 	}
 }

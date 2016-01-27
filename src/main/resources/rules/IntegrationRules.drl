@@ -5,7 +5,7 @@ import transfer.datacenter.*;
 import transfer.visudesign.*;
 import transfer.association.*;
 import services.auxiliary.*;
-import services.domains.*;
+import services.domainproxies.*;
 import services.accesspoint.*;
 
 import VisualizationDesignService.domain.*;
@@ -44,7 +44,7 @@ import message.IsDefinedAsw;
 	    when
 	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
 	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
-	        IsDefinedAsw (defined == true) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
+	        IsDefinedAsw (defined == true) from SensorDeploymentDomainProxy.isDefined(new IsDefinedMsg($catalog, $uri))
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - Resource matching Data\" triggered !");
 	end
@@ -53,7 +53,7 @@ import message.IsDefinedAsw;
 	    when
 	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
 	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-	        IsDefinedAsw (defined == false) from SensorDeploymentDomain.isDefined(new IsDefinedMsg($catalog, $uri))
+	        IsDefinedAsw (defined == false) from SensorDeploymentDomainProxy.isDefined(new IsDefinedMsg($catalog, $uri))
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Resource matching Data\" triggered !");
 	end

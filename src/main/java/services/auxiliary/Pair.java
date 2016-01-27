@@ -2,32 +2,35 @@ package services.auxiliary;
 
 public class Pair {
 
-	private String model1;
-	private String model2;
-	public Pair(String model1, String model2) {
-		this.model1 = model1;
-		this.model2 = model2;
+	private String element1;
+	private String element2;
+	private boolean bidirectionnal;
+	
+	public Pair(String model1, String model2, boolean bidirectionnal) {
+		this.element1 = model1;
+		this.element2 = model2;
+		this.bidirectionnal = bidirectionnal;
 	}
 	
-	  public String getPaired(String model) throws Exception{
-		if(model==model1)
-			return model2;
-		else if (model == model2)
-			return model1;
+	  public String getPaired(String element) throws Exception{
+		if(element==element1)
+			return element2;
+		else if (element == element2 && bidirectionnal )
+			return element1;
 	    else
 	    	throw new Exception();
 	  }
 
 	  public Boolean contains(String model){
-		 return model.equals(model1)||model.equals(model2);
+		 return model.equals(element1)||model.equals(element2);
 	  }
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((model1 == null) ? 0 : model1.hashCode());
-		result = prime * result + ((model2 == null) ? 0 : model2.hashCode());
+		result = prime * result + ((element1 == null) ? 0 : element1.hashCode());
+		result = prime * result + ((element2 == null) ? 0 : element2.hashCode());
 		return result;
 	}
 
@@ -40,9 +43,9 @@ public class Pair {
 		if (getClass() != obj.getClass())
 			return false;
 		Pair other = (Pair) obj;
-		if (this.model1.equals(other.model1) && this.model2.equals(other.model2))
+		if (this.element1.equals(other.element1) && this.element2.equals(other.element2))
 			return true;
-		if (this.model1.equals(other.model2) && this.model2.equals(other.model1))
+		if (this.element1.equals(other.element2) && this.element2.equals(other.element1))
 			return true;
 		return false;
 	}
