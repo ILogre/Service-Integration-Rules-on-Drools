@@ -1,10 +1,16 @@
 package services.accesspoint;
 
-import domain.VisualizationDesign;
+import java.io.IOException;
+
 import message.CharacterizeVisuMsg;
 import message.DeclareDashboardMsg;
 import message.PlugDataMsg;
 import message.PositionMsg;
+import transfer.IsValidatedAsw;
+import transfer.IsValidatedMsg;
+import transfer.ValidateAndPersistMsg;
+import domain.VisualizationDesign;
+import errors.UnknownDashboardException;
 
 public class VisualizationDesignAP  {
 	
@@ -17,15 +23,23 @@ public class VisualizationDesignAP  {
 		VisualizationDesign.declareDashboard(msg);
 	}
 	
-	public static void characterizeVisu(CharacterizeVisuMsg msg){
+	public static void characterizeVisu(CharacterizeVisuMsg msg) throws UnknownDashboardException{
 		VisualizationDesign.characterizeVisu(msg);
 	}
 	
-	public static void plugData(PlugDataMsg msg){
+	public static void plugData(PlugDataMsg msg) throws UnknownDashboardException{
 		VisualizationDesign.plugData(msg);
 	}
 	
-	public static void position(PositionMsg msg){
+	public static void position(PositionMsg msg) throws UnknownDashboardException{
 		VisualizationDesign.position(msg);
+	}
+	
+	public static IsValidatedAsw isValidated(IsValidatedMsg msg){
+		return VisualizationDesign.isValidated(msg);
+	}
+	
+	public static void validateAndPersist(ValidateAndPersistMsg msg) throws IOException {
+		VisualizationDesign.validateAndPersist(msg);
 	}
 }
