@@ -15,7 +15,7 @@ import errors.UnknownDashboardException;
 public class VisualizationDesignAP  {
 	
 	/*
-	 * This proxy exposes the behavior of the Visualization Design domain accessible to the final user
+	 * This access point exposes the behavior of the Visualization Design domain accessible to the final user
 	 * It is responsible for receiving the original message from the rule engine and transmit it to the domain implementation.
 	 */
 	

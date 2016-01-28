@@ -3,7 +3,7 @@ package services.domainproxies;
 import integration.Scenario;
 import message.StartProjectMsg;
 
-public class RequirementEngineeringDomainProxy {
+public class RequirementEngineeringDP {
 
 
 /*

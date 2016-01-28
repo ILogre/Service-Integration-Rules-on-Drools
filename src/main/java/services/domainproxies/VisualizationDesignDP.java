@@ -11,7 +11,7 @@ import message.PositionMsg;
  * It is responsible for receiving information from the rule engine and transmit the message on the bus.
  */
 
-public class VisualizationDesignDomainProxy  {
+public class VisualizationDesignDP  {
 	
 	public static void declareDashboard(DeclareDashboardMsg msg){
 		System.out.println("[Proxy] "+"declareDashboard"+"\t\t ("+System.currentTimeMillis()+" )");

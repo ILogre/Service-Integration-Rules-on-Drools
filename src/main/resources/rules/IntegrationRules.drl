@@ -38,6 +38,15 @@ import message.IsValidatedCatalogAsw;
 
 /** Visualization Design **/
 
+	rule "Declare Dashboard"
+		when
+			$msg : DeclareDashboardMsg()
+		then
+	    	System.out.println("[DROOLS]: Rule Declare Dashboard triggered !");
+	    	
+			VisualizationDesignAP.declareDashboard($msg);
+	end
+
 /* Plug Data */
 
 	rule "Plug Data - No Catalog linked"
@@ -52,7 +61,7 @@ import message.IsValidatedCatalogAsw;
 	    when
 	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
 	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
-	        IsDefinedAsw (defined == true) from SensorDeploymentDomainProxy.isDefined(new IsDefinedMsg($catalog, $uri))
+	        IsDefinedAsw (defined == true) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $uri))
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - Resource matching Data\" triggered !");
 	end
@@ -61,7 +70,7 @@ import message.IsValidatedCatalogAsw;
 	    when
 	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
 	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-	        IsDefinedAsw (defined == false) from SensorDeploymentDomainProxy.isDefined(new IsDefinedMsg($catalog, $uri))
+	        IsDefinedAsw (defined == false) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $uri))
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Resource matching Data\" triggered !");
 	end
@@ -79,14 +88,6 @@ import message.IsValidatedCatalogAsw;
 
 
 /** Visualization Design **/
-
-	rule "Declare Dashboard"
-		when
-			$msg : DeclareDashboardMsg()
-		then
-	    	System.out.println("[DROOLS]: Rule Declare Dashboard triggered !");
-			VisualizationDesignAP.declareDashboard($msg);
-	end
 
 	rule "Characterize Visualization"
 		when
