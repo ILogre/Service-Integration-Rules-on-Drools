@@ -32,6 +32,11 @@
 	<artifactId>drools-core</artifactId>
 	<version>6.3.0.Final</version>
 </dependency>
+	<dependency>
+		<groupId>fr.unice.i3s</groupId>
+		<artifactId>RequirementEngineeringService</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
 </dependencies>
 
 </project>
