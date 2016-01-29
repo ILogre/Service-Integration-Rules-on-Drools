@@ -30,6 +30,8 @@ import message.IsDefinedAsw;
 import message.ValidateAndPersistCatalogMsg;
 import message.IsValidatedCatalogMsg;
 import message.IsValidatedCatalogAsw;
+import message.DescribeSensorMsg;
+import message.DescribeSensorAsw;
 
 /*********************************/
 /******* Integration Rules *******/
@@ -187,6 +189,17 @@ import message.IsValidatedCatalogAsw;
 		then
 	    	System.out.println("[DROOLS]: Rule Is Validated Catalog triggered !");
 			$mailbox.put($msg, SensorDeploymentAP.isValidated($msg));
+			update($mailbox);
+	end
+	
+	rule "Describe Sensor"
+	no-loop true
+		when
+			$msg : DescribeSensorMsg()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Describe Sensor triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.describeSensor($msg));
 			update($mailbox);
 	end
 	

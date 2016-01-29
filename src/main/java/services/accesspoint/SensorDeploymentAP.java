@@ -4,16 +4,22 @@ import java.io.IOException;
 
 import message.BuildSensorHostingHierarchyMsg;
 import message.DeclareCatalogMsg;
+import message.DescribeSensorAsw;
+import message.DescribeSensorMsg;
 import message.IsDefinedAsw;
 import message.IsDefinedMsg;
 import message.IsValidatedCatalogAsw;
 import message.IsValidatedCatalogMsg;
 import message.RecordEventBasedSensorMsg;
 import message.RecordPeriodicSensorMsg;
+import message.SearchAllSensorsAsw;
+import message.SearchAllSensorsMsg;
 import message.SketchPatternMsg;
 import message.ValidateAndPersistCatalogMsg;
 import domain.SensorDeployment;
 import errors.UnknownCatalogException;
+import errors.UnkonwnSensorException;
+import errors.UnreachableCodeException;
 
 public class SensorDeploymentAP {
 
@@ -42,7 +48,7 @@ public class SensorDeploymentAP {
 		SensorDeployment.sketchPattern(msg);
 	}
 
-	public static IsDefinedAsw isDefined ( IsDefinedMsg msg ) {
+	public static IsDefinedAsw isDefined ( IsDefinedMsg msg ) throws UnknownCatalogException {
 		return SensorDeployment.isDefined(msg);
 	}
 	
@@ -53,5 +59,13 @@ public class SensorDeploymentAP {
 	public static IsValidatedCatalogAsw isValidated(IsValidatedCatalogMsg msg){
 		return SensorDeployment.isValidated(msg);
 	}
-		
+	
+	public static DescribeSensorAsw describeSensor(DescribeSensorMsg msg) throws UnknownCatalogException, UnkonwnSensorException, UnreachableCodeException{
+		return SensorDeployment.describeSensor(msg);
+	}
+	
+	public static SearchAllSensorsAsw searchAllSensors(SearchAllSensorsMsg msg){
+		return SensorDeployment.searchAllSensors(msg);
+	}
+
 }

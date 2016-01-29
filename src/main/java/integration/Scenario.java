@@ -8,6 +8,8 @@ import message.BuildSensorHostingHierarchyMsg;
 import message.CharacterizeVisuMsg;
 import message.DeclareCatalogMsg;
 import message.DeclareDashboardMsg;
+import message.DescribeSensorAsw;
+import message.DescribeSensorMsg;
 import message.IsValidatedCatalogAsw;
 import message.IsValidatedCatalogMsg;
 import message.PlugDataMsg;
@@ -90,7 +92,13 @@ public class Scenario {
 		params.put("max", 29);
 		concerns.put("Threshold", params);
 		bus.handle(new PlugDataMsg(dashboardName, "OfficeCooling", "indoor_temperature", concerns));
+		
+		System.out.println("[Scenario - Step "+ step++ +"] : Check a sensor description");
+		DescribeSensorMsg desc = new DescribeSensorMsg(catalogName,"tempin_443");
+		bus.handle(desc);
+		DescribeSensorAsw ansDesc = (DescribeSensorAsw) mailbox.get(desc);
+		System.out.println("Result : Sensor description = "+ansDesc.toString());
 
-		System.out.println("Step 7 : Ending.");
+		System.out.println("End of Scenario.");
 	}
 }

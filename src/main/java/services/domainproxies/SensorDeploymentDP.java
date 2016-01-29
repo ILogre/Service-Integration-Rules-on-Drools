@@ -4,10 +4,14 @@ import transfer.Answer;
 import integration.Scenario;
 import message.BuildSensorHostingHierarchyMsg;
 import message.DeclareCatalogMsg;
+import message.DescribeSensorAsw;
+import message.DescribeSensorMsg;
 import message.IsDefinedAsw;
 import message.IsDefinedMsg;
 import message.RecordEventBasedSensorMsg;
 import message.RecordPeriodicSensorMsg;
+import message.SearchAllSensorsAsw;
+import message.SearchAllSensorsMsg;
 import message.SketchPatternMsg;
 
 public class SensorDeploymentDP {
@@ -48,6 +52,20 @@ public class SensorDeploymentDP {
 		Scenario.bus.handle(msg);
 		Answer ans = Scenario.mailbox.get(msg);
 		return (IsDefinedAsw) ans;
+	}
+	
+	public static DescribeSensorAsw describeSensor(DescribeSensorMsg msg){
+		System.out.println("[Proxy] "+"describeSensor"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.bus.handle(msg);
+		Answer ans = Scenario.mailbox.get(msg);
+		return (DescribeSensorAsw) ans;
+	}
+	
+	public static SearchAllSensorsAsw searchAllSensors(SearchAllSensorsMsg msg){
+		System.out.println("[Proxy] "+"searchAllSensors"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.bus.handle(msg);
+		Answer ans = Scenario.mailbox.get(msg);
+		return (SearchAllSensorsAsw) ans;
 	}
 		
 }
