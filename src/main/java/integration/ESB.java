@@ -22,6 +22,7 @@ public class ESB {
 		    KieSession kSession = kContainer.newKieSession("ksession-rules");
 	        kSession.insert(msg);
 	        kSession.insert(Scenario.mailbox);
+	        kSession.insert(Scenario.spy);
 	        kSession.fireAllRules();
         } catch (Throwable t) {
             t.printStackTrace();

@@ -6,6 +6,7 @@ import transfer.*;
 import transfer.datacenter.*;
 import transfer.visudesign.*;
 import transfer.association.*;
+import transfer.notification.*;
 import services.auxiliary.*;
 import services.domainproxies.*;
 import services.accesspoint.*;
@@ -41,40 +42,55 @@ import message.DescribeSensorAsw;
 /** Visualization Design **/
 
 	rule "Declare Dashboard"
+	no-loop true
 		when
-			$msg : DeclareDashboardMsg()
+			$msg : DeclareDashboardMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Declare Dashboard triggered !");
-	    	
+	    	$spy.increaseNbRulesExecuted();
 			VisualizationDesignAP.declareDashboard($msg);
 	end
 
 /* Plug Data */
 
 	rule "Plug Data - No Catalog linked"
+	no-loop true
 	    when
 	        $msg : PlugDataMsg ( $dashboard : dashboardName) and
-	        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
+	      	(HasLinkedAsw ( answer == false ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog"))
+	        or $ans: GetLinkedAsw (type != "Catalog") from AssociationDP.getLinked(new GetLinkedMsg($dashboard, "Dashboard", "Catalog")))
+	        and $spy : Spy()  
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Catalog\" triggered !");
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Plug Data - Resource matching Data"
+	no-loop true
 	    when
-	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
-	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard)) and
-	        IsDefinedAsw (defined == true) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $uri))
+	        $msg : PlugDataMsg ( $dashboard : dashboardName, $dataName : dataName) and
+	        HasLinkedAsw ( answer == true ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog")) and
+	        GetLinkedAsw ($catalog : model) from AssociationDP.getLinked(new GetLinkedMsg($dashboard, "Dashboard", "Catalog")) and
+	        IsDefinedAsw (defined == true) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $dataName)) and
+			$spy : Spy()
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - Resource matching Data\" triggered !");
+	    	$spy.increaseNbRulesExecuted();
+	    	AssociationDP.link(new LinkMsg($dataName,"Dashboard",$catalog, "Catalog", true));
 	end
 	
 	rule "Plug Data - No Resource matching Data"
+	no-loop true
 	    when
-	        $msg : PlugDataMsg ( $dashboard : dashboardName, $uri : dataName) and
-	        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-	        IsDefinedAsw (defined == false) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $uri))
+	        $msg : PlugDataMsg ( $dashboard : dashboardName, $dataName : dataName) and
+	        HasLinkedAsw ( answer == true ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog")) and
+	        GetLinkedAsw ($catalog : model) from AssociationDP.getLinked(new GetLinkedMsg($dashboard, "Dashboard", "Catalog")) and
+	        IsDefinedAsw (defined == false) from SensorDeploymentDP.isDefined(new IsDefinedMsg($catalog, $dataName)) and
+			$spy : Spy()
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Resource matching Data\" triggered !");
+	    	$spy.increaseNbRulesExecuted();
 	end
 
 
@@ -92,27 +108,36 @@ import message.DescribeSensorAsw;
 /** Visualization Design **/
 
 	rule "Characterize Visualization"
+	no-loop true
 		when
-			$msg : CharacterizeVisuMsg()
+			$msg : CharacterizeVisuMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Characterize Visualization triggered !");
 			VisualizationDesignAP.characterizeVisu($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 
 	rule "Position"
+	no-loop true
 		when
-			$msg : PositionMsg()
+			$msg : PositionMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Position triggered !");
 			VisualizationDesignAP.position($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Validate And Persist Dashboard"
+	no-loop true
 		when
-			$msg : ValidateAndPersistDashboardMsg()
+			$msg : ValidateAndPersistDashboardMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Validate And Persist Dashboard triggered !");
 			VisualizationDesignAP.validateAndPersist($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 			
 	
@@ -120,11 +145,13 @@ import message.DescribeSensorAsw;
 	no-loop true
 		when
 			$msg : IsValidatedDashboardMsg()
-			$mailbox : HashMap()
+			$mailbox : HashMap() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Is Validated Dashboard triggered !");
 			$mailbox.put($msg, VisualizationDesignAP.isValidated($msg));
 			update($mailbox);
+	    	$spy.increaseNbRulesExecuted();
 	end
 			
 	
@@ -133,87 +160,169 @@ import message.DescribeSensorAsw;
 
 	rule "Declare Catalog"
 		when
-			$msg : DeclareCatalogMsg()
+			$msg : DeclareCatalogMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Declare Catalog triggered !");
 			SensorDeploymentAP.declareCatalog($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Build Sensor Hosting Hierarchy"
+	no-loop true
 		when
-			$msg : BuildSensorHostingHierarchyMsg()
+			$msg : BuildSensorHostingHierarchyMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Build Sensor Hosting Hierarchy triggered !");
 			SensorDeploymentAP.buildSensorHostingHierarchy($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Record Event-Based Sensor"
+	no-loop true
 		when
-			$msg : RecordEventBasedSensorMsg()
+			$msg : RecordEventBasedSensorMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Record Event-Based Sensor triggered !");
 			SensorDeploymentAP.recordEventBasedSensor($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Record Periodic Sensor"
+	no-loop true
 		when
-			$msg : RecordPeriodicSensorMsg()
+			$msg : RecordPeriodicSensorMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Record Periodic Sensor triggered !");
 			SensorDeploymentAP.recordPeriodicSensor($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Sketch Pattern"
+	no-loop true
 		when
-			$msg : SketchPatternMsg()
+			$msg : SketchPatternMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Sketch Pattern triggered !");
 			SensorDeploymentAP.sketchPattern($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end	
 	
 	
 	rule "Validate And Persist Catalog"
+	no-loop true
 		when
-			$msg : ValidateAndPersistCatalogMsg()
+			$msg : ValidateAndPersistCatalogMsg() and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Validate And Persist Catalog triggered !");
 			SensorDeploymentAP.validateAndPersist($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
 			
 	
 	rule "Is Validated Catalog"
 	no-loop true
 		when
-			$msg : IsValidatedCatalogMsg()
+			$msg : IsValidatedCatalogMsg() and
+			$spy : Spy()
 			$mailbox : HashMap()
 		then
 	    	System.out.println("[DROOLS]: Rule Is Validated Catalog triggered !");
 			$mailbox.put($msg, SensorDeploymentAP.isValidated($msg));
-			update($mailbox);
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	rule "Describe Sensor"
 	no-loop true
 		when
-			$msg : DescribeSensorMsg()
+			$msg : DescribeSensorMsg() and
+			$spy : Spy()
 			$mailbox : HashMap()
 		then
 	    	System.out.println("[DROOLS]: Rule Describe Sensor triggered !");
 			$mailbox.put($msg, SensorDeploymentAP.describeSensor($msg));
-			update($mailbox);
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+	rule "Is Defined"
+	no-loop true
+		when
+			$msg : IsDefinedMsg()
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Is Defined triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.isDefined($msg));
+	    	$spy.increaseNbRulesExecuted();
 	end
 	
 	
 /** Miscalleneous **/
 
 	rule "Link"
+	no-loop true
 		when
-			$msg : LinkMsg( )
+			$msg : LinkMsg( ) and
+			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Link triggered !");
-			Association.link($msg);
+			AssociationAP.link($msg);
+	    	$spy.increaseNbRulesExecuted();
 	end
-
+	
+	
+	rule "Get Linked"
+	no-loop true
+		when
+			$msg : GetLinkedMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Get Linked triggered !");
+			$mailbox.put($msg, AssociationAP.getLinked($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+		
+	rule "Has Linked"
+	no-loop true
+		when
+			$msg : HasLinkedMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Has Linked triggered !");
+			$mailbox.put($msg, AssociationAP.hasLinked($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+	rule "Publish"
+	no-loop true
+		when
+			$msg : PublishMsg() and
+			$spy : Spy()
+		then
+	    	System.out.println("[DROOLS]: Rule Publish triggered !");
+			NotificationAP.publish($msg);
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+	rule "Consult"
+	no-loop true
+		when
+			$msg : ConsultMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Consult triggered !");
+			$mailbox.put($msg, NotificationAP.consult($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
 
 
 /***************************/

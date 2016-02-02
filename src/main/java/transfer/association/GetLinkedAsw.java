@@ -4,14 +4,16 @@ import transfer.Answer;
 
 public class GetLinkedAsw extends Answer {
 	private String model;
-	public GetLinkedAsw(String model) {
+	private String type; 
+	public GetLinkedAsw(String model, String type) {
 		super();
 		this.model = model;
+		this.type = type;
 	}
 	public String getModel() {
 		return model;
 	}
-	public void setModel(String model) {
-		this.model = model;
+	public String getType() {
+		return type;
 	}
 }

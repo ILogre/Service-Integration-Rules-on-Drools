@@ -1,9 +1,12 @@
 package services.domainproxies;
 
 import integration.Scenario;
+import services.auxiliary.LinkedElementNotFoundException;
 import transfer.Answer;
 import transfer.association.GetLinkedAsw;
 import transfer.association.GetLinkedMsg;
+import transfer.association.HasLinkedAsw;
+import transfer.association.HasLinkedMsg;
 import transfer.association.LinkMsg;
 
 public class AssociationDP {
@@ -15,14 +18,24 @@ public class AssociationDP {
 	
 	public static void link(LinkMsg msg){
 		System.out.println("[Proxy] "+"link"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.spy.increaseNbRulesInternalTrigger();
 		Scenario.bus.handle(msg);
 	}
 	
-	public static GetLinkedAsw getLinked(GetLinkedMsg msg) throws Exception{
+	public static GetLinkedAsw getLinked(GetLinkedMsg msg) throws LinkedElementNotFoundException{
 		System.out.println("[Proxy] "+"getLinked"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.spy.increaseNbRulesInternalTrigger();
 		Scenario.bus.handle(msg);
 		Answer ans = Scenario.mailbox.get(msg);
 		return (GetLinkedAsw) ans;
+	}
+	
+	public static HasLinkedAsw hasLinked(HasLinkedMsg msg){
+		System.out.println("[Proxy] "+"hasLinked"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.bus.handle(msg);
+		Answer ans = Scenario.mailbox.get(msg);
+		return (HasLinkedAsw) ans;
 	}
 	
 }

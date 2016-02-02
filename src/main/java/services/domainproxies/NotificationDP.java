@@ -16,11 +16,13 @@ public class NotificationDP {
 		
 		public static void publish(PublishMsg msg){
 			System.out.println("[Proxy] "+"publish"+"\t\t ("+System.currentTimeMillis()+" )");
+			Scenario.spy.increaseNbRulesInternalTrigger();
 			Scenario.bus.handle(msg);
 		}
 		
 		public static ConsultAsw consult(ConsultMsg msg) throws UnknownModelException{
 			System.out.println("[Proxy] "+"consult"+"\t\t ("+System.currentTimeMillis()+" )");
+			Scenario.spy.increaseNbRulesInternalTrigger();
 			Scenario.bus.handle(msg);
 			Answer ans = Scenario.mailbox.get(msg);
 			return (ConsultAsw) ans;
