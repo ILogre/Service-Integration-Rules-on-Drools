@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import message.BuildSensorHostingHierarchyMsg;
 import message.DeclareCatalogMsg;
+import message.DescribeObservationPatternAsw;
+import message.DescribeObservationPatternMsg;
 import message.DescribeSensorAsw;
 import message.DescribeSensorMsg;
 import message.IsDefinedAsw;
@@ -12,12 +14,16 @@ import message.IsValidatedCatalogAsw;
 import message.IsValidatedCatalogMsg;
 import message.RecordEventBasedSensorMsg;
 import message.RecordPeriodicSensorMsg;
+import message.SearchAllObservationPatternsAsw;
+import message.SearchAllObservationPatternsMsg;
 import message.SearchAllSensorsAsw;
 import message.SearchAllSensorsMsg;
 import message.SketchPatternMsg;
 import message.ValidateAndPersistCatalogMsg;
 import domain.SensorDeployment;
 import errors.UnknownCatalogException;
+import errors.UnknownContainerException;
+import errors.UnknownObservationPatternException;
 import errors.UnkonwnSensorException;
 import errors.UnreachableCodeException;
 
@@ -64,8 +70,17 @@ public class SensorDeploymentAP {
 		return SensorDeployment.describeSensor(msg);
 	}
 	
-	public static SearchAllSensorsAsw searchAllSensors(SearchAllSensorsMsg msg){
+	public static SearchAllSensorsAsw searchAllSensors(SearchAllSensorsMsg msg) throws UnknownCatalogException, UnknownContainerException{
 		return SensorDeployment.searchAllSensors(msg);
+	}
+	
+	public static DescribeObservationPatternAsw describeObservationPattern(DescribeObservationPatternMsg msg) throws UnknownCatalogException, UnknownObservationPatternException{
+		return SensorDeployment.describeObservationPattern(msg);
+
+	}
+	public static SearchAllObservationPatternsAsw searchAllObservationPatterns(SearchAllObservationPatternsMsg msg) throws UnknownCatalogException{
+		return SensorDeployment.searchAllObservationPatterns(msg);
+	
 	}
 
 }

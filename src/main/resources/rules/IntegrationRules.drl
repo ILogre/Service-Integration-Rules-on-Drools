@@ -33,6 +33,13 @@ import message.IsValidatedCatalogMsg;
 import message.IsValidatedCatalogAsw;
 import message.DescribeSensorMsg;
 import message.DescribeSensorAsw;
+import message.SearchAllObservationPatternsMsg;
+import message.SearchAllObservationPatternsAsw;
+import message.SearchAllSensorsMsg;
+import message.SearchAllSensorsAsw;
+import message.DescribeObservationPatternMsg;
+import message.DescribeObservationPatternAsw;
+
 
 /*********************************/
 /******* Integration Rules *******/
@@ -289,6 +296,42 @@ end
 	    	$spy.increaseNbRulesExecuted();
 	end
 	
+	rule "Describe Observation Pattern"
+	no-loop true
+		when
+			$msg : DescribeObservationPatternMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Describe Observation Pattern triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.describeObservationPattern($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+		
+	rule "Search All Sensors"
+	no-loop true
+		when
+			$msg : SearchAllSensorsMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Search All Sensors triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.searchAllSensors($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
+	
+	rule "Search All Observation Patterns"
+	no-loop true
+		when
+			$msg : SearchAllObservationPatternsMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Search All Observation Patterns triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.searchAllObservationPatterns($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
 	
 /** Miscalleneous **/
 

@@ -11,12 +11,18 @@ import message.BuildSensorHostingHierarchyMsg;
 import message.CharacterizeVisuMsg;
 import message.DeclareCatalogMsg;
 import message.DeclareDashboardMsg;
+import message.DescribeObservationPatternAsw;
+import message.DescribeObservationPatternMsg;
 import message.DescribeSensorAsw;
 import message.DescribeSensorMsg;
 import message.IsValidatedCatalogAsw;
 import message.IsValidatedCatalogMsg;
 import message.PlugDataMsg;
 import message.RecordPeriodicSensorMsg;
+import message.SearchAllObservationPatternsAsw;
+import message.SearchAllObservationPatternsMsg;
+import message.SearchAllSensorsAsw;
+import message.SearchAllSensorsMsg;
 import message.SketchPatternMsg;
 import message.ValidateAndPersistCatalogMsg;
 import transfer.Answer;
@@ -101,6 +107,34 @@ public class Scenario {
 		System.out.println("Result: Catalog validation status = "
 				+ ansSuccess.isValidated());
 
+		System.out.println("[Scenario - Step " + ++step
+				+ "]: List all the Observation patterns");
+		SearchAllObservationPatternsMsg patterns = new SearchAllObservationPatternsMsg(catalogName);
+		bus.handle(patterns);
+		SearchAllObservationPatternsAsw patternsAsw = (SearchAllObservationPatternsAsw) mailbox.get(patterns);
+		System.out.println(patternsAsw);
+
+		System.out.println("[Scenario - Step " + ++step
+				+ "]: List all the sensors in Office443");
+		SearchAllSensorsMsg sensorsMsg = new SearchAllSensorsMsg(catalogName,"Office443");
+		bus.handle(sensorsMsg);
+		SearchAllSensorsAsw sensorsAsw = (SearchAllSensorsAsw) mailbox.get(sensorsMsg);
+		System.out.println(sensorsAsw);
+		
+		System.out.println("[Scenario - Step " + ++step
+				+ "]: Detail an Observation Pattern");
+		DescribeObservationPatternMsg descOpPat = new DescribeObservationPatternMsg(catalogName,"SC_Temperature");
+		bus.handle(descOpPat);
+		DescribeObservationPatternAsw descOpPatAsw = (DescribeObservationPatternAsw) mailbox.get(descOpPat);
+		System.out.println(descOpPatAsw);
+		
+		System.out.println("[Scenario - Step " + ++step
+				+ "]: Describe a Sensor");
+		DescribeSensorMsg descSensor = new DescribeSensorMsg(catalogName,"tempin_443");
+		bus.handle(descSensor);
+		DescribeSensorAsw descSensorAsw = (DescribeSensorAsw) mailbox.get(descSensor);
+		System.out.println(descSensorAsw);
+		
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: Add a visu to the dashboard");
 		bus.handle(new CharacterizeVisuMsg(dashboardName, "OfficeCooling",

@@ -1,15 +1,21 @@
 package services.domainproxies;
 
+import errors.UnknownCatalogException;
+import errors.UnknownObservationPatternException;
 import transfer.Answer;
 import integration.Scenario;
 import message.BuildSensorHostingHierarchyMsg;
 import message.DeclareCatalogMsg;
+import message.DescribeObservationPatternAsw;
+import message.DescribeObservationPatternMsg;
 import message.DescribeSensorAsw;
 import message.DescribeSensorMsg;
 import message.IsDefinedAsw;
 import message.IsDefinedMsg;
 import message.RecordEventBasedSensorMsg;
 import message.RecordPeriodicSensorMsg;
+import message.SearchAllObservationPatternsAsw;
+import message.SearchAllObservationPatternsMsg;
 import message.SearchAllSensorsAsw;
 import message.SearchAllSensorsMsg;
 import message.SketchPatternMsg;
@@ -74,6 +80,21 @@ public class SensorDeploymentDP {
 		Scenario.bus.handle(msg);
 		Answer ans = Scenario.mailbox.get(msg);
 		return (SearchAllSensorsAsw) ans;
+	}
+	
+	public static DescribeObservationPatternAsw describeObservationPattern(DescribeObservationPatternMsg msg) throws UnknownCatalogException, UnknownObservationPatternException{
+		System.out.println("[Proxy] "+"describeObservationPattern"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.bus.handle(msg);
+		Answer ans = Scenario.mailbox.get(msg);
+		return (DescribeObservationPatternAsw) ans;
+	}
+	public static SearchAllObservationPatternsAsw searchAllObservationPatterns(SearchAllObservationPatternsMsg msg) throws UnknownCatalogException{
+		System.out.println("[Proxy] "+"searchAllObservationPatterns"+"\t\t ("+System.currentTimeMillis()+" )");
+		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.bus.handle(msg);
+		Answer ans = Scenario.mailbox.get(msg);
+		return (SearchAllObservationPatternsAsw) ans;
 	}
 		
 }
