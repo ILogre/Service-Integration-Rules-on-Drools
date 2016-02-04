@@ -44,7 +44,7 @@ import message.DescribeSensorAsw;
 	rule "Declare Dashboard"
 	no-loop true
 		when
-			$msg : DeclareDashboardMsg() and
+			$msg : DeclareDashboardMsg($dashboard : dashboardName) and
 			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Declare Dashboard triggered !");
@@ -93,6 +93,34 @@ import message.DescribeSensorAsw;
 	    	$spy.increaseNbRulesExecuted();
 	end
 
+/* Characterize */
+
+rule "Characterize Visualization - Over_time - No Catalog"
+    when
+        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, whatQualifiers contains "Over_time" ) and
+	    (HasLinkedAsw ( answer == false ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog"))
+        or $ans: GetLinkedAsw (type != "Catalog") from AssociationDP.getLinked(new GetLinkedMsg($dashboard, "Dashboard", "Catalog")))    
+	    and $spy : Spy()      
+    then
+    	System.out.println("[DROOLS]: Rule \"Characterize - Over_time - No Catalog\" triggered !");
+	    $spy.increaseNbRulesExecuted();
+	    VisualizationDesignAP.characterizeVisu($msg);
+end
+
+rule "Characterize Visualization - Over_time - One Catalog"
+    when
+        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, whatQualifiers contains "Over_time" ) and
+        HasLinkedAsw ( answer == true ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog")) and
+        GetLinkedAsw ($catalog : model, type == "Catalog") from AssociationDP.getLinked(new GetLinkedMsg($dashboard,"Dashboard", "Catalog")) and
+        $spy : Spy()
+        
+    then
+    	System.out.println("Rule \"Characterize - Over_time - One Catalog\" triggered !");
+	    $spy.increaseNbRulesExecuted();
+	    VisualizationDesignAP.characterizeVisu($msg);
+	    // Notify VD with a list of Continuous suitable sensors
+end
+
 
 /** Sensor Deployment **/
 
@@ -110,7 +138,7 @@ import message.DescribeSensorAsw;
 	rule "Characterize Visualization"
 	no-loop true
 		when
-			$msg : CharacterizeVisuMsg() and
+			$msg : CharacterizeVisuMsg (whatQualifiers not contains "Over_time") and
 			$spy : Spy()
 		then
 	    	System.out.println("[DROOLS]: Rule Characterize Visualization triggered !");
@@ -323,44 +351,9 @@ import message.DescribeSensorAsw;
 			$mailbox.put($msg, NotificationAP.consult($msg));
 	    	$spy.increaseNbRulesExecuted();
 	end
+	
 
 
 /***************************/
 /********* Drafts **********/
 /***************************/
-
-/* Characterize 
-
-rule "Characterize - Threshold - No Catalog"
-    when
-        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, $concernsMap : whatQualifier, $concernsMap.containsKey("Threshold") ) and
-        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
-    then
-    	System.out.println("Rule \"Characterize - Threshold - No Catalog\" triggered !");
-    	//TODO Log : no integration
-end
-
-rule "Characterize - Threshold - One Catalog"
-    when
-        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
-        GetLinkedAsw ($catalog : model != null) from Association.getLinked(new GetLinkedMsg($dashboard))
-        
-    then
-    	System.out.println("Rule \"Characterize - Threshold - One Catalog\" triggered !");
-end
-
-
-rule "Characterize - Threshold - Several Catalog"
-    when
-        $msg : CharacterizeMsg ( $dashboard : dashboardName, $concernsMap : concerns, $concernsMap.containsKey("Threshold") ) and
-        $ans: GetLinkedAsw (model == null) from Association.getLinked(new GetLinkedMsg($dashboard))        
-    then
-    	System.out.println("Rule \"Characterize - Threshold - Several Catalog\" triggered !");
-end
-*/
-
-
-
-
-
-

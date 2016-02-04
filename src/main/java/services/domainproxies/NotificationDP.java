@@ -27,6 +27,7 @@ public class NotificationDP {
 			Answer ans = Scenario.mailbox.get(msg);
 			return (ConsultAsw) ans;
 		}
+
 		
 	
 }
