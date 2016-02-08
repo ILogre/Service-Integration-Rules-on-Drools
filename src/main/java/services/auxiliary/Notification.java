@@ -10,6 +10,7 @@ import transfer.Service;
 import transfer.notification.ConsultAsw;
 import transfer.notification.ConsultMsg;
 import transfer.notification.PublishMsg;
+import transfer.notification.RaiseConsistencyIssueMsg;
 import exceptions.UnknownModelException;
 
 public class Notification extends Service {
@@ -42,6 +43,7 @@ public class Notification extends Service {
 				System.out.print(message+" ");
 			}
 		}
+		System.out.println();
 	}
 	
 	/*
@@ -66,6 +68,24 @@ public class Notification extends Service {
 			return new ConsultAsw(messages);
 		}
 			
+	}
+	
+	public static void raiseConsistencyIssue(RaiseConsistencyIssueMsg msg){
+		String message = msg.getIssue().name();
+		
+		Thing temp = new Thing(msg.getOwner(), msg.getType());
+		System.out.print("[Notification] Consistency issue raised on element "+temp.getElement()+" of type "+temp.getType()+" notified with ");
+		if(!notifications.containsKey(temp)){
+			List<Note> notes = new ArrayList<Note>();
+			notes.add(new Note(message,true));
+			System.out.print(message);
+			notifications.put(temp, notes);
+		}else{
+			List<Note> notes = notifications.get(temp);
+			notes.add(new Note(message,true));
+			System.out.print(message);
+
+		}
 	}
 	
 	

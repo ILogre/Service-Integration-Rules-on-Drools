@@ -70,13 +70,16 @@ import java.util.Arrays;
 	rule "Plug Data - No Catalog linked"
 	no-loop true
 	    when
-	        $msg : PlugDataMsg ( $dashboard : dashboardName) and
+	        $msg : PlugDataMsg ( $dashboard : dashboardName, $dataName : dataName) and
 	      	(HasLinkedAsw ( answer == false ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog"))
 	        or $ans: GetLinkedAsw (type != "Catalog") from AssociationDP.getLinked(new GetLinkedMsg($dashboard, "Dashboard", "Catalog")))
 	        and $spy : Spy()  
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Catalog\" triggered !");
 	    	$spy.increaseNbRulesExecuted();
+	    	VisualizationDesignAP.plugData($msg);
+	    	NotificationDP.raiseConsistencyIssue(new RaiseConsistencyIssueMsg($dashboard, "Dashboard", ConsistencyIssue.No_catalog_providing_sensor_linked));
+	    	NotificationDP.raiseConsistencyIssue(new RaiseConsistencyIssueMsg($dataName, "Source", ConsistencyIssue.No_sensor_providing_data_linked));
 	end
 	
 	rule "Plug Data - Resource matching Data"
@@ -90,7 +93,8 @@ import java.util.Arrays;
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - Resource matching Data\" triggered !");
 	    	$spy.increaseNbRulesExecuted();
-	    	AssociationDP.link(new LinkMsg($dataName,"Dashboard",$catalog, "Catalog", true));
+	    	VisualizationDesignAP.plugData($msg);
+	    	AssociationDP.link(new LinkMsg($dataName,"Source",$dataName, "Sensor", true));
 	end
 	
 	rule "Plug Data - No Resource matching Data"
@@ -103,7 +107,9 @@ import java.util.Arrays;
 			$spy : Spy()
 	    then
 	    	System.out.println("[DROOLS]: Rule \"Plug Data - No Resource matching Data\" triggered !");
+	    	VisualizationDesignAP.plugData($msg);
 	    	$spy.increaseNbRulesExecuted();
+	    	NotificationDP.raiseConsistencyIssue(new RaiseConsistencyIssueMsg($dataName, "Source", ConsistencyIssue.No_sensor_providing_data_linked));
 	end
 
 /* Characterize */
@@ -146,7 +152,7 @@ function List<String> seekSensorsByObservationPatterns(String catalog, DescribeO
 function String concatenate(String[] messages){
 	StringBuilder message = new StringBuilder();
 	for(int i = 0; i<messages.length; i++)
-		message.append(messages[i]);
+		message.append(messages[i]+" ");
 	return message.toString();
 }
 
@@ -173,8 +179,7 @@ rule "Characterize Visualization - Over_time - One Catalog"
 	    detailledPatterns = continuousPatterns.toArray(detailledPatterns);
 	    List<String> sensors = seekSensorsByObservationPatterns($catalog, detailledPatterns);
 	    String[] sensorVector = new String[sensors.size()];
-	    NotificationDP.publish( new PublishMsg( $visuName, "Visualization", "List of suitable sensors : \n"+concatenate(sensors.toArray(sensorVector))));
-	    // Notify VD with a list of Continuous suitable sensors
+	    NotificationDP.publish( new PublishMsg( $visuName, "Visualization", "List of suitable continuous timed sensors : \n"+concatenate(sensors.toArray(sensorVector))));
 end
 
 

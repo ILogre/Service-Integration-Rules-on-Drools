@@ -5,6 +5,7 @@ import transfer.Answer;
 import transfer.notification.ConsultAsw;
 import transfer.notification.ConsultMsg;
 import transfer.notification.PublishMsg;
+import transfer.notification.RaiseConsistencyIssueMsg;
 import exceptions.UnknownModelException;
 
 public class NotificationDP {
@@ -28,6 +29,10 @@ public class NotificationDP {
 			return (ConsultAsw) ans;
 		}
 
-		
+		public static void raiseConsistencyIssue(RaiseConsistencyIssueMsg msg){
+			System.out.println("[Proxy] "+"raise Consistency Issue"+"\t\t ("+System.currentTimeMillis()+" )");
+			Scenario.spy.increaseInternallyTriggeredAuxiliaryRules();
+			Scenario.bus.handle(msg);
+		}
 	
 }
