@@ -24,16 +24,23 @@ public class Notification extends Service {
 	 */
 	public static void publish(PublishMsg msg){
 		List<String> messages = Arrays.asList(msg.getMessages());
+		
 		Thing temp = new Thing(msg.getOwner(), msg.getType());
+		System.out.print("[Notification] Element "+temp.getElement()+" of type "+temp.getType()+" notified with ");
 		if(!notifications.containsKey(temp)){
 			List<Note> notes = new ArrayList<Note>();
-			for(String message:messages)
+			for(String message:messages){
 				notes.add(new Note(message,false));
+				System.out.print(message+" ");
+			}
 			notifications.put(temp, notes);
+			
 		}else{
 			List<Note> notes = notifications.get(temp);
-			for(String message:messages)
+			for(String message:messages){
 				notes.add(new Note(message,false));
+				System.out.print(message+" ");
+			}
 		}
 	}
 	

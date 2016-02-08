@@ -39,6 +39,12 @@ import message.SearchAllSensorsMsg;
 import message.SearchAllSensorsAsw;
 import message.DescribeObservationPatternMsg;
 import message.DescribeObservationPatternAsw;
+import message.SearchSensorsByObservationPatternMsg;
+import message.SearchSensorsByObservationPatternAsw;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /*********************************/
@@ -114,17 +120,60 @@ rule "Characterize Visualization - Over_time - No Catalog"
 	    VisualizationDesignAP.characterizeVisu($msg);
 end
 
+function List<DescribeObservationPatternAsw> seekContinuousObservationPatterns(String catalog, String[] observationPatterns){
+	List<DescribeObservationPatternAsw> result = new ArrayList<DescribeObservationPatternAsw>();
+	for(Object obs : observationPatterns){
+		DescribeObservationPatternMsg msg = new DescribeObservationPatternMsg(catalog, (String) obs);
+		SensorDeploymentDP.describeObservationPattern(msg);
+		DescribeObservationPatternAsw asw = (DescribeObservationPatternAsw) Scenario.mailbox.get(msg);
+		if(asw.isContinuous())
+			result.add(asw);
+	}
+	return result;
+}
+
+function List<String> seekSensorsByObservationPatterns(String catalog, DescribeObservationPatternAsw[] patterns){
+	List<String> result = new ArrayList<String>();
+	for(DescribeObservationPatternAsw obs : patterns){
+		SearchSensorsByObservationPatternMsg message = new SearchSensorsByObservationPatternMsg(catalog, obs.getObsPatName());
+		SensorDeploymentDP.searchSensorsByObservationPattern(message);
+		SearchSensorsByObservationPatternAsw answer = (SearchSensorsByObservationPatternAsw) Scenario.mailbox.get(message);
+		result.addAll(answer.getSensors());
+	}
+	return result;
+}
+
+function String concatenate(String[] messages){
+	StringBuilder message = new StringBuilder();
+	for(int i = 0; i<messages.length; i++)
+		message.append(messages[i]);
+	return message.toString();
+}
+
 rule "Characterize Visualization - Over_time - One Catalog"
     when
-        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, whatQualifiers contains "Over_time" ) and
+        $msg : CharacterizeVisuMsg ( $dashboard : dashboardName, whatQualifiers contains "Over_time", $visuName : visuName) and
         HasLinkedAsw ( answer == true ) from AssociationDP.hasLinked(new HasLinkedMsg($dashboard, "Dashboard", "Catalog")) and
         GetLinkedAsw ($catalog : model, type == "Catalog") from AssociationDP.getLinked(new GetLinkedMsg($dashboard,"Dashboard", "Catalog")) and
+		$mailbox : HashMap() and
         $spy : Spy()
         
     then
     	System.out.println("Rule \"Characterize - Over_time - One Catalog\" triggered !");
 	    $spy.increaseNbRulesExecuted();
 	    VisualizationDesignAP.characterizeVisu($msg);
+	    SearchAllObservationPatternsMsg message = new SearchAllObservationPatternsMsg($catalog);
+	    SensorDeploymentDP.searchAllObservationPatterns(message);
+	    SearchAllObservationPatternsAsw answer = (SearchAllObservationPatternsAsw) $mailbox.get(message);
+	    List<String> patternsList = answer.getPatterns();
+	    String[] patterns = new String[patternsList.size()];
+	    patterns = patternsList.toArray(patterns);
+	    List<DescribeObservationPatternAsw> continuousPatterns = seekContinuousObservationPatterns($catalog, patterns);
+	    DescribeObservationPatternAsw[] detailledPatterns = new DescribeObservationPatternAsw[continuousPatterns.size()];
+	    detailledPatterns = continuousPatterns.toArray(detailledPatterns);
+	    List<String> sensors = seekSensorsByObservationPatterns($catalog, detailledPatterns);
+	    String[] sensorVector = new String[sensors.size()];
+	    NotificationDP.publish( new PublishMsg( $visuName, "Visualization", "List of suitable sensors : \n"+concatenate(sensors.toArray(sensorVector))));
 	    // Notify VD with a list of Continuous suitable sensors
 end
 
@@ -330,6 +379,18 @@ end
 		then
 	    	System.out.println("[DROOLS]: Rule Search All Observation Patterns triggered !");
 			$mailbox.put($msg, SensorDeploymentAP.searchAllObservationPatterns($msg));
+	    	$spy.increaseNbRulesExecuted();
+	end
+		
+	rule "Search Sensors By Observation Pattern"
+	no-loop true
+		when
+			$msg : SearchSensorsByObservationPatternMsg() and
+			$spy : Spy()
+			$mailbox : HashMap()
+		then
+	    	System.out.println("[DROOLS]: Rule Search Sensors By Observation Pattern triggered !");
+			$mailbox.put($msg, SensorDeploymentAP.searchSensorsByObservationPattern($msg));
 	    	$spy.increaseNbRulesExecuted();
 	end
 	

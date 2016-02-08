@@ -14,7 +14,7 @@ public class RequirementEngineeringDP {
 	
 	public static void startProject (StartProjectMsg msg){
 		System.out.println("[Proxy]"+"StartProject"+"\t\t ("+System.currentTimeMillis()+" )");
-		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.spy.increaseInternallyTriggeredDomainRules();
 		Scenario.bus.handle(msg);
 	}
 	

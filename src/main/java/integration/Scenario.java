@@ -109,32 +109,40 @@ public class Scenario {
 
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: List all the Observation patterns");
-		SearchAllObservationPatternsMsg patterns = new SearchAllObservationPatternsMsg(catalogName);
+		SearchAllObservationPatternsMsg patterns = new SearchAllObservationPatternsMsg(
+				catalogName);
 		bus.handle(patterns);
-		SearchAllObservationPatternsAsw patternsAsw = (SearchAllObservationPatternsAsw) mailbox.get(patterns);
+		SearchAllObservationPatternsAsw patternsAsw = (SearchAllObservationPatternsAsw) mailbox
+				.get(patterns);
 		System.out.println(patternsAsw);
 
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: List all the sensors in Office443");
-		SearchAllSensorsMsg sensorsMsg = new SearchAllSensorsMsg(catalogName,"Office443");
+		SearchAllSensorsMsg sensorsMsg = new SearchAllSensorsMsg(catalogName,
+				"Office443");
 		bus.handle(sensorsMsg);
-		SearchAllSensorsAsw sensorsAsw = (SearchAllSensorsAsw) mailbox.get(sensorsMsg);
+		SearchAllSensorsAsw sensorsAsw = (SearchAllSensorsAsw) mailbox
+				.get(sensorsMsg);
 		System.out.println(sensorsAsw);
-		
+
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: Detail an Observation Pattern");
-		DescribeObservationPatternMsg descOpPat = new DescribeObservationPatternMsg(catalogName,"SC_Temperature");
+		DescribeObservationPatternMsg descOpPat = new DescribeObservationPatternMsg(
+				catalogName, "SC_Temperature");
 		bus.handle(descOpPat);
-		DescribeObservationPatternAsw descOpPatAsw = (DescribeObservationPatternAsw) mailbox.get(descOpPat);
+		DescribeObservationPatternAsw descOpPatAsw = (DescribeObservationPatternAsw) mailbox
+				.get(descOpPat);
 		System.out.println(descOpPatAsw);
-		
+
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: Describe a Sensor");
-		DescribeSensorMsg descSensor = new DescribeSensorMsg(catalogName,"tempin_443");
+		DescribeSensorMsg descSensor = new DescribeSensorMsg(catalogName,
+				"tempin_443");
 		bus.handle(descSensor);
-		DescribeSensorAsw descSensorAsw = (DescribeSensorAsw) mailbox.get(descSensor);
+		DescribeSensorAsw descSensorAsw = (DescribeSensorAsw) mailbox
+				.get(descSensor);
 		System.out.println(descSensorAsw);
-		
+
 		System.out.println("[Scenario - Step " + ++step
 				+ "]: Add a visu to the dashboard");
 		bus.handle(new CharacterizeVisuMsg(dashboardName, "OfficeCooling",
@@ -170,7 +178,10 @@ public class Scenario {
 		System.out.println("End of Scenario.\n Rules fired: "
 				+ spy.getNbRulesExecuted() + "\n Messages sent by user : "
 				+ step + "\n Rules internally triggered: "
-				+ spy.getNbRulesInternalTrigger());
+				+ spy.getNbRulesInternalTrigger() + " (in domain : "
+				+ spy.getNbInternallyTriggeredDomainRules()
+				+ " - in auxiliaries "
+				+ spy.getNbInternallyTriggeredAuxiliaryRules() + ")");
 
 		clean(catalogName, dashboardName);
 	}

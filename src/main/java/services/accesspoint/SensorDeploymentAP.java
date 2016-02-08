@@ -18,6 +18,8 @@ import message.SearchAllObservationPatternsAsw;
 import message.SearchAllObservationPatternsMsg;
 import message.SearchAllSensorsAsw;
 import message.SearchAllSensorsMsg;
+import message.SearchSensorsByObservationPatternAsw;
+import message.SearchSensorsByObservationPatternMsg;
 import message.SketchPatternMsg;
 import message.ValidateAndPersistCatalogMsg;
 import domain.SensorDeployment;
@@ -80,7 +82,10 @@ public class SensorDeploymentAP {
 	}
 	public static SearchAllObservationPatternsAsw searchAllObservationPatterns(SearchAllObservationPatternsMsg msg) throws UnknownCatalogException{
 		return SensorDeployment.searchAllObservationPatterns(msg);
+	}
 	
+	public static SearchSensorsByObservationPatternAsw searchSensorsByObservationPattern (SearchSensorsByObservationPatternMsg msg) throws UnknownCatalogException{
+		return SensorDeployment.searchSensorsByObservationPattern(msg);
 	}
 
 }

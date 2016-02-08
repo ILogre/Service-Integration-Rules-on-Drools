@@ -18,13 +18,13 @@ public class AssociationDP {
 	
 	public static void link(LinkMsg msg){
 		System.out.println("[Proxy] "+"link"+"\t\t ("+System.currentTimeMillis()+" )");
-		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.spy.increaseInternallyTriggeredAuxiliaryRules();
 		Scenario.bus.handle(msg);
 	}
 	
 	public static GetLinkedAsw getLinked(GetLinkedMsg msg) throws LinkedElementNotFoundException{
 		System.out.println("[Proxy] "+"getLinked"+"\t\t ("+System.currentTimeMillis()+" )");
-		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.spy.increaseInternallyTriggeredAuxiliaryRules();
 		Scenario.bus.handle(msg);
 		Answer ans = Scenario.mailbox.get(msg);
 		return (GetLinkedAsw) ans;
@@ -32,7 +32,7 @@ public class AssociationDP {
 	
 	public static HasLinkedAsw hasLinked(HasLinkedMsg msg){
 		System.out.println("[Proxy] "+"hasLinked"+"\t\t ("+System.currentTimeMillis()+" )");
-		Scenario.spy.increaseNbRulesInternalTrigger();
+		Scenario.spy.increaseInternallyTriggeredAuxiliaryRules();
 		Scenario.bus.handle(msg);
 		Answer ans = Scenario.mailbox.get(msg);
 		return (HasLinkedAsw) ans;
