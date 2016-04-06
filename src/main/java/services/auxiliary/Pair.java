@@ -1,15 +1,10 @@
 package services.auxiliary;
 
 public class Pair {
-
-
+	
 	private Thing element1;
-
 	private Thing element2;
-
 	private boolean bidirectionnal;
-	
-	
 	
 	 public Pair(Thing element1, Thing element2, boolean bidirectionnal) {
 		super();
@@ -34,8 +29,6 @@ public class Pair {
 	    else
 	    	throw new LinkedElementNotFoundException("Element "+element.getElement()+" of type "+element.getType()+" has no linked element of type "+lookingFor);
 	  }
-	
-
 
 	public Thing getPaired(String modelName, String modelType, String lookingFor) throws LinkedElementNotFoundException {
 		Thing model = new Thing(modelName,modelType);
@@ -88,7 +81,4 @@ public class Pair {
 			return false;
 		return true;
 	}
-
-	
-
 }
